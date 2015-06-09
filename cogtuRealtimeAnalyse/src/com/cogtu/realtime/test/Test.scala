@@ -1,7 +1,7 @@
 package com.cogtu.realtime.test
 
-import com.cogtu.realtime.logAnalyse.RealTimeLogAnalyse
 import com.cogtu.realtime.tools.JsonParseTool
+import org.json.JSONObject
 
 /**
  * Created by lenovo on 2015/6/3.
@@ -9,7 +9,20 @@ import com.cogtu.realtime.tools.JsonParseTool
 object Test {
   def main(args: Array[String]) {
     // testJson
-    testArraySplit
+    // testArraySplit
+    testScoreBoardJson
+  }
+
+  def testScoreBoardJson {
+    val log = "{\"mid\":\"3730846496498908\",\"uid\":\"3027183680\",\"text\":\"你敢说你是被店里的老总纠正的吗[偷笑]保时捷……马抗～\",\"pic\":[\"64c6d9c2gw1ei7ujv11yvj20m80ergr2\",\"64c6d9c2gw1ei7ujtforlj20m80er78c\",\"64c6d9c2gw1ei7ujtwdrqj20m80er0xw\",\"64c6d9c2gw1ei7ujuwrbqj20m80ern09\",\"64c6d9c2gw1ei7ujt6q6xj20m80ergoo\"],\"stat\":{\"reposts_count\":0,\"comments_count\":0,\"attitudes_count\":1}}";
+    val myJsonObject = new JSONObject(log)
+    println("mid=" + myJsonObject.get("mid"))
+
+    val log2 = "{\"type\":\"1\",\"pageuri\":\"3334432423\",\"ref\":\"\",\"ext\":\"xxxxxxxxxxxxxxxxxxxx\",\"refext\":\"xxxxxxxxxxxxxxxxxxxx\"}";
+    val myJsonObj = new JSONObject(log2)
+    println("pageuri is:" + myJsonObj.getString("pageuri") + ", type is:" + myJsonObj.getString("type"))
+
+
   }
 
   def testArraySplit {

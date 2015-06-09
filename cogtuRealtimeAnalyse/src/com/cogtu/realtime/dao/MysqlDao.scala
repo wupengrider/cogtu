@@ -106,12 +106,12 @@ object MysqlDao {
    * @param crawlerSuccTime
    */
   def insertReqLogAnalyseResult(conn: Connection, timeInterval: String, fillRate: Double, renderRate: Double, clickRate: Double,
-                                crawlerErrTime: Int, crawlerSuccTime: Int, filledReqLogTopNJsonStr: String, fingeredReqLogTopNJsonStr: String, hottestWeiboIdTopNJsonStr: String) {
+                                crawlerErrTime: Int, crawlerSuccTime: Int, filledReqLogTopNJsonStr: String, fingeredReqLogTopNJsonStr: String, hottestWeiboIdTopNJsonStr: String, qps: Long) {
     // val tool: MysqlTool = new MysqlTool
     // val conn: Connection = tool.getConnection
 
     try {
-      val insertSql: String = "insert into rt_ad_push(ID,TIME_INTERVAL,TIMESTAMP,FILL_RATE,RENDER_RATE,CLICK_RATE,CRAWLER_ERR_TIME,CRAWLER_SUCC_TIME,FILLED_TOPN_AD,FINGERED_TOPN_AD,HOTTEST_WEIBO_TOPN) values(?,?,?,?,?,?,?,?,?,?,?)"
+      val insertSql: String = "insert into rt_ad_push(ID,TIME_INTERVAL,TIMESTAMP,FILL_RATE,RENDER_RATE,CLICK_RATE,CRAWLER_ERR_TIME,CRAWLER_SUCC_TIME,FILLED_TOPN_AD,FINGERED_TOPN_AD,HOTTEST_WEIBO_TOPN, qps) values(?,?,?,?,?,?,?,?,?,?,?,?)"
       val pstatement: PreparedStatement = conn.prepareStatement(insertSql)
       pstatement.setString(1, UUID.randomUUID.toString)
       pstatement.setString(2, timeInterval)
@@ -124,6 +124,7 @@ object MysqlDao {
       pstatement.setString(9, filledReqLogTopNJsonStr)
       pstatement.setString(10, fingeredReqLogTopNJsonStr)
       pstatement.setString(11, hottestWeiboIdTopNJsonStr)
+      pstatement.setLong(12, qps)
       pstatement.executeUpdate
     }
     catch {

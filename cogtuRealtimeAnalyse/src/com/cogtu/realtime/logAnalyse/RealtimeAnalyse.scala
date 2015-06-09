@@ -14,7 +14,6 @@ import java.sql.Connection
 import java.util.UUID
 import org.json.JSONObject
 import org.apache.spark.rdd.RDD
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * Created by lenovo on 2015/6/5.
@@ -83,7 +82,8 @@ object RealtimeAnalyse {
    * @param args
    */
   def realtimeCalc(args: Array[String]) {
-    val ssc: StreamingContext = SparkUtil.createSparkStreamingContext(args(0))
+    val ssc: StreamingContext = SparkUtil.createSparkStreamingContext(args(0),
+      SystemConf.SC_SPARK_JOBNAME, SystemConf.SC_SPARK_MASTER, SystemConf.SC_SPARK_BATCHTIME)
     // val sc: SparkContext = ssc.sparkContext
 
     // val topicMap = SystemConf.SC_KAFKA_TOPIC.split(",").map((_, SystemConf.SC_KAFKA_TOPIC_THREADNUM)).toMap
@@ -93,31 +93,6 @@ object RealtimeAnalyse {
       .map(_._2)
 
     dstream.foreachRDD(batchRDD => {
-
-      /*if (batchRDD.count > 0) {
-        // batchRDD.saveAsTextFile("/cogtu/logs/reqLog/testWrite_" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()))
-      }*/
-
-      // 将当前的数据集RDD与之前的数据放在一起缓存起来
-      /*if (cacheRDD != null) {
-        cacheRDD.unpersist()
-      }*/
-      /*if (cacheRDD == null) {
-        cacheRDD = batchRDD
-      } else {
-        cacheRDD.unpersist()
-        cacheRDD.union(batchRDD)
-      }
-      cacheRDD.persist()*/
-      /*// 判断是否到达缓存点
-      if (writeReqLog2HDFSBatchNum == writeReqLog2HDFSBatchCount) {
-        cacheRDD.saveAsTextFile(s"${SystemConf.SC_STREAMING_REQLOG_WRITE_PATH}/reqLog_${new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())}")
-        writeReqLog2HDFSBatchNum = 0
-        cacheRDD = null
-      } else {
-        writeReqLog2HDFSBatchNum += 1
-      }*/
-
       // 将日志字符串转换成JavaObject
       // batchRDD.collect().map(jsonStr => parseJsonStr2Obj(jsonStr)).filter(null != _)
       val parsedObjRDD = batchRDD.map(jsonStr => parseJsonStr2Obj(jsonStr)).filter(null != _).repartition(args(1).toInt)
@@ -450,7 +425,7 @@ object RealtimeAnalyse {
       } else {
         0.0
       }
-      MysqlDao.insertReqLogAnalyseResult(conn, SystemConf.SC_SPARK_BATCHTIME.toString, fillRate, renderRate, clickRate, 0, 0, filledReqLogTopNJsonStr, fingeredReqLogTopNJsonStr, hottestWeiboIdTopNJsonStr)
+      MysqlDao.insertReqLogAnalyseResult(conn, SystemConf.SC_SPARK_BATCHTIME.toString, fillRate, renderRate, clickRate, 0, 0, filledReqLogTopNJsonStr, fingeredReqLogTopNJsonStr, hottestWeiboIdTopNJsonStr, qps)
 
       println("QPS：" + qps + ",\n请求广告数：" + requestADCount + ",\n填充广告数：" + filledADCount
         + ",\n展示广告数：" + fingeredADCount + ",\n点击广告数：" + clickedADCount)

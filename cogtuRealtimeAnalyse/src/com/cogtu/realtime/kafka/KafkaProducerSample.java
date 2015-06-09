@@ -47,6 +47,13 @@ public class KafkaProducerSample {
         String logSpiderNormal = "{\"weibo\":{\"status\":1,\"errorCode\":0,\"isDownload\":0,\"mqSendTime\":10,\"agent\":\"local\"},\"taskKey\":\"Ckx7MovuE\",\"pid\":\"10.0.0.5:1\",\"pics\":[{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":338,\"size\":31995},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":277,\"size\":41360},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":3179,\"size\":38508},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":87,\"size\":36355},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":125,\"size\":25545},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":412,\"size\":45833},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":3208,\"size\":52678},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":486,\"size\":40168},{\"status\":1,\"errorCode\":0,\"picId\":1,\"useTime\":253,\"size\":37087}],\"source\":\"spider\",\"startTime\":1433498373065,\"hostIp\":\"10.0.0.5\",\"endTime\":1433498464426}";
         KeyedMessage<String, String> dataSpiderNormal = new KeyedMessage<String, String>("spider_wup", logSpiderNormal);
 
+        String scoreBoardLog1 = "{\"type\":\"1\",\"pageuri\":\"3334432423\",\"ref\":\"\",\"ext\":\"xxxxxxxxxxxxxxxxxxxx\",\"refext\":\"xxxxxxxxxxxxxxxxxxxx\"}";
+        String scoreBoardLog2 = "{\"type\":\"1\",\"pageuri\":\"3334432423\",\"ref\":\"\",\"ext\":\"xxxxxxxxxxxxxxxxxxxx\",\"refext\":\"xxxxxxxxxxxxxxxxxxxx\"}";
+        String scoreBoardLog3 = "{\"type\":\"2\",\"pageuri\":\"3334432423\",\"ref\":\"\",\"ext\":\"xxxxxxxxxxxxxxxxxxxx\",\"refext\":\"xxxxxxxxxxxxxxxxxxxx\"}";
+        KeyedMessage<String, String> scoreLog1 = new KeyedMessage<String, String>("URL2", scoreBoardLog1);
+        KeyedMessage<String, String> scoreLog2 = new KeyedMessage<String, String>("URL2", scoreBoardLog2);
+        KeyedMessage<String, String> scoreLog3 = new KeyedMessage<String, String>("URL2", scoreBoardLog3);
+
         try {
             while (true) {
                 String currentTime = new Date().toString();
@@ -62,6 +69,10 @@ public class KafkaProducerSample {
                     producer.send(dataSpider);
                     producer.send(dataSpiderAgentLack);
                     producer.send(dataSpiderNormal);
+
+                    producer.send(scoreLog1);
+                    producer.send(scoreLog2);
+                    producer.send(scoreLog3);
                 }
                 System.out.println("Send " + args[0] + " records in 5 sec. timeid is " + currentTime);
                 Thread.sleep(5000);
@@ -73,8 +84,9 @@ public class KafkaProducerSample {
 			 */
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            producer.close();
         }
-        producer.close();
     }
 
 }

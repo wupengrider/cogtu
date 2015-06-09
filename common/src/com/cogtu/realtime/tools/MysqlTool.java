@@ -1,7 +1,5 @@
 package com.cogtu.realtime.tools;
 
-import org.apache.spark.sql.columnar.TIMESTAMP;
-
 import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
